@@ -19,15 +19,7 @@ class CustomFormatter(logging.Formatter):
 
         CustomFormatter.last_log_time = record.created
 
-        # Convert logger name to file-based namespacing
-        record.name = self.format_namespace(record.name)
-
         return super().format(record)
-
-    def format_namespace(self, logger_name: str) -> str:
-        """ Convert logger name to file-based namespace (e.g., src:module:a) """
-        parts = logger_name.split(".")
-        return ":".join(parts) if parts else logger_name
 
 
 def get_logger(file_path):
@@ -44,8 +36,7 @@ def get_logger(file_path):
     current_file_path = os.path.abspath(os.path.dirname(__file__))
     project_base_path = os.path.join(current_file_path, '..')
 
-    relative_path = base_dir + '.' + os.path.relpath(file_path, project_base_path).replace(os.sep, ".")
-    namespace = relative_path.replace(".py", "")
+    namespace = (base_dir + '/' + os.path.relpath(file_path, project_base_path)).replace(os.sep, ":")
 
     logger = logging.getLogger(namespace)
     logger.setLevel(logging.DEBUG)
