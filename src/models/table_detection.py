@@ -6,7 +6,7 @@ model_name = "microsoft/table-transformer-detection"
 
 
 def load_model(device: str):
-    logger.info("Loading Table Transformer model...")
+    logger.info("Loading microsoft/table-transformer-detection model...")
 
     model = TableTransformerForObjectDetection.from_pretrained(model_name)
     image_processor = DetrImageProcessor()
