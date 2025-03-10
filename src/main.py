@@ -1,11 +1,19 @@
 import io
 import torch
 
-from fastapi import FastAPI, File, UploadFile
-from transformers import TableTransformerForObjectDetection, TableTransformerImageProcessor
 from PIL import Image
+from fastapi import FastAPI, File, UploadFile
+from transformers import TableTransformerForObjectDetection, DetrImageProcessor
 
 app = FastAPI()
+
+model_name = "microsoft/table-transformer-detection"
+model = TableTransformerForObjectDetection.from_pretrained(model_name)
+feature_extractor = DetrImageProcessor()
+
+# Ensure model is on CUDA if available
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model.to(device)
 
 
 @app.get('/')
@@ -13,29 +21,12 @@ def health_check():
     return {"message": 'Document Parser - AI Agent is running fine!'}
 
 
-@app.get('/detect-table-bounding')
-def detect_table_bounding_box():
-    return {"table": []}
-
-
-app = FastAPI()
-
-# Load the pre-trained Table Transformer model
-model_name = "microsoft/table-transformer-detection"
-processor = TableTransformerImageProcessor.from_pretrained(model_name)
-model = TableTransformerForObjectDetection.from_pretrained(model_name)
-
-# Ensure model is on CUDA if available
-device = "cuda" if torch.cuda.is_available() else "cpu"
-model.to(device)
-
 @app.post("/detect-table-bounding-box")
 async def detect_table_bounding_box(file: UploadFile = File(...)):
-    # Read image
-    image = Image.open(io.BytesIO(await file.read())).convert("RGB")
+    file_bytes = io.BytesIO(await file.read())
+    image = Image.open(file_bytes).convert("RGB")
 
-    # Preprocess the image
-    encoding = processor(images=image, return_tensors="pt")
+    encoding = feature_extractor(images=image, return_tensors="pt")
     encoding = {k: v.to(device) for k, v in encoding.items()}
 
     # Perform inference
