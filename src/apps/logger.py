@@ -33,11 +33,15 @@ class CustomFormatter(logging.Formatter):
 def get_logger(file_path):
     """ Returns a logger with a namespace based on the file path. """
 
-    project_base_path = os.path.abspath(os.path.dirname(__file__))
-    relative_path = os.path.relpath(file_path, project_base_path).replace(os.sep, ".")
-    module_namespace = relative_path.replace(".py", "")
+    base_dir = 'src'
 
-    logger = logging.getLogger(module_namespace)
+    current_file_path = os.path.abspath(os.path.dirname(__file__))
+    project_base_path = os.path.join(current_file_path, '..')
+
+    relative_path = base_dir + '.' + os.path.relpath(file_path, project_base_path).replace(os.sep, ".")
+    namespace = relative_path.replace(".py", "")
+
+    logger = logging.getLogger(namespace)
     logger.setLevel(logging.DEBUG)
 
     console_handler = logging.StreamHandler()
@@ -45,7 +49,7 @@ def get_logger(file_path):
 
     # Apply formatting
     formatter = CustomFormatter(
-        '%(asctime)s %(name)s [%(funcName)s:L%(lineno)d] %(levelname)s %(message)s %(time_taken)s')
+        '%(name)s [%(funcName)s:L%(lineno)d] %(levelname)s %(message)s %(time_taken)s')
     console_handler.setFormatter(formatter)
 
     # Prevent duplicate handlers

@@ -3,17 +3,13 @@ import torch
 
 from PIL import Image
 from fastapi import FastAPI, File, UploadFile
-from transformers import TableTransformerForObjectDetection, DetrImageProcessor
-
-app = FastAPI()
-
-model_name = "microsoft/table-transformer-detection"
-model = TableTransformerForObjectDetection.from_pretrained(model_name)
-feature_extractor = DetrImageProcessor()
+from .models import load_model
 
 # Ensure model is on CUDA if available
 device = "cuda" if torch.cuda.is_available() else "cpu"
-model.to(device)
+
+app = FastAPI()
+image_processor, model = load_model(device)
 
 
 @app.get('/')
@@ -26,7 +22,7 @@ async def detect_table_bounding_box(file: UploadFile = File(...)):
     file_bytes = io.BytesIO(await file.read())
     image = Image.open(file_bytes).convert("RGB")
 
-    encoding = feature_extractor(images=image, return_tensors="pt")
+    encoding = image_processor(images=image, return_tensors="pt")
     encoding = {k: v.to(device) for k, v in encoding.items()}
 
     # Perform inference
