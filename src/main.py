@@ -41,4 +41,4 @@ async def detect_table_bounding_box(file: UploadFile = File(...)):
     # Format output
     bounding_boxes = [{"x": float(x), "y": float(y), "width": float(w), "height": float(h)} for x, y, w, h in boxes]
 
-    return {"bounding_boxes": bounding_boxes}
+    return {"table_bounding_boxes": bounding_boxes}
