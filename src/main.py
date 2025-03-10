@@ -29,20 +29,16 @@ async def detect_table_bounding_box(file: UploadFile = File(...)):
     encoding = image_processor(images=image, return_tensors="pt")
     encoding = {k: v.to(device) for k, v in encoding.items()}
 
-    logger.info('Running table detection on the image.')
-
     # Perform inference Only
+    logger.info('Running table detection on the image.')
     with torch.no_grad():
         outputs = model(**encoding)
 
-    logger.info('Formatting results.')
-
-    # Extract bounding boxes
+    logger.info('Extracting bounding boxes from results.')
     results = outputs.logits[0].softmax(-1)
     keep = results[:, :-1].max(-1).values > 0.5  # Confidence threshold
     boxes = outputs.pred_boxes[0][keep].cpu().numpy()
 
-    # Format output
     bounding_boxes = [{"x": float(x), "y": float(y), "width": float(w), "height": float(h)} for x, y, w, h in boxes]
     logger.debug(f'Detection completed - bounding boxes {bounding_boxes}')
 
