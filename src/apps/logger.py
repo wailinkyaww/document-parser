@@ -31,7 +31,13 @@ class CustomFormatter(logging.Formatter):
 
 
 def get_logger(file_path):
-    """ Returns a logger with a namespace based on the file path. """
+    """
+    Returns a logger with a namespace based on the file path.
+
+    Sample usage:
+    logger = get_logger(__file__)
+    logger.info('log statement here')
+    """
 
     base_dir = 'src'
 
