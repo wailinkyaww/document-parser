@@ -1,0 +1,3 @@
+# web framework
+fastapi~=0.115.8
+uvicorn[standard]
