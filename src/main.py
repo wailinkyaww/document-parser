@@ -28,7 +28,7 @@ def health_check():
     return {"message": 'Document Parser is running fine!'}
 
 
-@app.post("/detect-table-bounding-box")
+@app.post("/detect-table-bounding-boxes")
 async def detect_table_bounding_box(file: UploadFile = File(...)):
     file_bytes = io.BytesIO(await file.read())
     image = Image.open(file_bytes).convert("RGB")
