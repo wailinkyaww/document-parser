@@ -1,3 +1,8 @@
+from .apps.config import initialize_config
+
+# This should run before we do anything.
+initialize_config()
+
 import io
 import torch
 
