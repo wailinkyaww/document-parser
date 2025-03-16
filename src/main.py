@@ -6,6 +6,7 @@ from fastapi import FastAPI, File, UploadFile
 
 from .models import load_model
 from .apps.logger import get_logger
+from .middlewares.authenticate_request import AuthenticateRequestMiddleware
 
 # Ensure model is on CUDA if available
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -14,10 +15,12 @@ app = FastAPI()
 logger = get_logger(__file__)
 image_processor, model = load_model(device)
 
+app.add_middleware(AuthenticateRequestMiddleware)
+
 
 @app.get('/')
 def health_check():
-    return {"message": 'Document Parser - AI Agent is running fine!'}
+    return {"message": 'Document Parser is running fine!'}
 
 
 @app.post("/detect-table-bounding-box")
