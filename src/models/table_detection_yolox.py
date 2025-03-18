@@ -5,7 +5,8 @@ logger = get_logger(__file__)
 
 
 def load_model(device: str):
-    # Load YOLOv8 model
+    logger.info('Loading yolov8m-table-extraction model...')
+
     model = YOLO("keremberke/yolov8m-table-extraction")
 
     model.overrides["conf"] = 0.25  # Confidence threshold
@@ -13,5 +14,7 @@ def load_model(device: str):
     model.overrides["agnostic_nms"] = False  # Non-class specific detection
     model.overrides["max_det"] = 1000  # Maximum detections per image
     model.overrides["device"] = device  # GPU / CPU
+
+    logger.info('Model loaded successfully.')
 
     return model
