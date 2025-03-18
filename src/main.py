@@ -42,10 +42,14 @@ async def detect_table_bounding_box(file: UploadFile = File(...)):
     with torch.no_grad():
         outputs = model(**encoding)
 
-    logger.info('Extracting bounding boxes from results.')
-    results = outputs.logits[0].softmax(-1)
-    keep = results[:, :-1].max(-1).values > 0.5  # Confidence threshold
-    boxes = outputs.pred_boxes[0][keep].cpu().numpy()
+    logger.info('Rescaling result w.r.t image size')
+    logger.debug(f'Image size: {image.size}')
+
+    width, height = image.size
+    results = image_processor.post_process_object_detection(outputs, threshold=0.5, target_sizes=[(height, width)])[0]
+
+    boxes = results['boxes']
+    logger.info(boxes)
 
     bounding_boxes = [{"x": float(x), "y": float(y), "width": float(w), "height": float(h)} for x, y, w, h in boxes]
     logger.debug(f'Detection completed - bounding boxes {bounding_boxes}')
