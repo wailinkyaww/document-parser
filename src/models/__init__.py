@@ -1,1 +1,1 @@
-from .table_detection import load_model
+from .table_detection_yolox import load_model as load_table_detection_yolox_model
