@@ -3,3 +3,6 @@
 
 # python caches
 __pycache__
+
+# model files
+*.pt
