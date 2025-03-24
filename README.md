@@ -1,4 +1,16 @@
-### Running FastAPI Application
+### Document Parser
+
+*Please forgive me if the repository naming sucks.*
+
+**What's this about?**
+
+Building a PDF parsing srvice that can extract useful insights from the document.
+Currently focusing on table detection / extraction using a combination of followings:
+- YOLOX
+- Table Transformers
+- algorithmic approach.
+
+**Running FastAPI Application**
 
 To run the application, run the following command:
 ```shell
