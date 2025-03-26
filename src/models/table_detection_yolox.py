@@ -1,7 +1,6 @@
 import torch
-from pandas.conftest import utc_fixture
 from ultralyticsplus import YOLO
-from ultralytics.nn import  tasks
+from ultralytics.nn import tasks
 
 from ..apps.logger import get_logger
 
@@ -17,11 +16,11 @@ def load_model(device: str):
     # YOLOv8 model checkpoint likely contains additional metadata beyond just the weights
     torch.serialization.add_safe_globals([tasks.DetectionModel])
 
-
     model.overrides["conf"] = 0.25  # Confidence threshold
     model.overrides["iou"] = 0.45  # IoU threshold
     model.overrides["agnostic_nms"] = False  # Non-class specific detection
     model.overrides["max_det"] = 1000  # Maximum detections per image
+    model.overrides["device"] = device
 
     logger.info('Model loaded successfully.')
 
